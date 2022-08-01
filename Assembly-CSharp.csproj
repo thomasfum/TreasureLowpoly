@@ -60,6 +60,7 @@
     <Compile Include="Assets\Samples\Google Cardboard XR Plugin for Unity\1.16.0\Hello Cardboard\Scripts\_CardboardStartup.cs" />
     <Compile Include="Assets\Samples\Google Cardboard XR Plugin for Unity\1.16.0\Hello Cardboard\Scripts\_ObjectController.cs" />
     <Compile Include="Assets\Scripts\Water.cs" />
+    <Compile Include="Assets\Scripts\MyLog.cs" />
     <Compile Include="Assets\Samples\LowPolyWater_Pack\Scripts\LowPolyWater.cs" />
     <Compile Include="Assets\Scripts\ObjectController.cs" />
     <Compile Include="Assets\Samples\Google Cardboard XR Plugin for Unity\1.16.0\Hello Cardboard\Scripts\_MovementCtrl.cs" />
@@ -67,7 +68,6 @@
     <Compile Include="Assets\Scripts\CameraPointer.cs" />
     <Compile Include="Assets\Scripts\CardboardStartup.cs" />
     <Compile Include="Assets\Samples\Google Cardboard XR Plugin for Unity\1.16.0\Hello Cardboard\Scripts\_VrModeController.cs" />
-    <Compile Include="Assets\Scripts\MyLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Samples\TextMesh Pro\Shaders\TMPro.cginc" />
