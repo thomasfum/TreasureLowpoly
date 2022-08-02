@@ -175,7 +175,8 @@ public class CameraPointer : MonoBehaviour
                 bShrinking = true;
                 ShrinkingTime = 0;
             }
-            _gazedAtObject?.SendMessage("OnPointerExit");
+            //if (isObjectController(_gazedAtObject))
+            //    _gazedAtObject.SendMessage("OnPointerExit");
             _gazedAtObject = null;
             GazeRing.size = new Vector2(1f, 1f);
             GazeRingTimer.enabled = false;
