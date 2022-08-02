@@ -45,6 +45,23 @@ public class ObjectController : MonoBehaviour
     private Renderer _myRenderer;
     private Vector3 _startingPosition;
     private AudioSource audioSource;
+    Transform[] allPositions;
+    private static int selectedPos=-1;
+
+    private void findTreasurePositions()
+    {
+        GameObject TreasurePositions = GameObject.Find("TreasurePositions");
+        //Debug.Log("---> TreasurePositions:" + TreasurePositions);
+        allPositions = TreasurePositions.GetComponentsInChildren<Transform>(true);
+        /*
+         * Debug.Log("---> TreasurePositions Nb: " + (allPositions.Length - 1));
+        foreach (Transform child in allPositions)
+        {
+            if (child != allPositions[0])
+                Debug.Log("---> child: " + child.name);
+        }
+        */
+    }
 
     /// <summary>
     /// Start is called before the first frame update.
@@ -55,30 +72,52 @@ public class ObjectController : MonoBehaviour
         _myRenderer = GetComponent<Renderer>();
         SetMaterial(false);
         audioSource = GameObject.Find("sound_1").GetComponent<AudioSource>();
+        findTreasurePositions();
     }
 
+   public static void InitFirst()
+    {
+        //init
+        GameObject Treasure = GameObject.Find("Treasure");
+        //Debug.Log("---> Treasure:" + Treasure);
+        Transform[] allTreasure = Treasure.GetComponentsInChildren<Transform>(true);
+        //Debug.Log("---> allTreasure Nb: " + (allTreasure.Length - 1));
+        allTreasure[1].gameObject.SetActive(true);
+        allTreasure[1].SendMessage("Init");
+    }
     /// <summary>
     /// Teleports this instance randomly when triggered by a pointer click.
     /// </summary>
     public void TeleportRandomly()
     {
+        //find
+        int NewselectedPos = Random.Range(1, allPositions.Length);
+        if (selectedPos == NewselectedPos)
+            NewselectedPos++;
+        if (NewselectedPos > allPositions.Length - 1)
+            NewselectedPos = 1;
+        selectedPos = NewselectedPos;
+
         // Picks a random sibling, activates it and deactivates itself.
         int sibIdx = transform.GetSiblingIndex();
         int numSibs = transform.parent.childCount;
         sibIdx = (sibIdx + Random.Range(1, numSibs)) % numSibs;
         GameObject randomSib = transform.parent.GetChild(sibIdx).gameObject;
-
+        /*
         // Computes new object's location.
         float angle = Random.Range(-Mathf.PI, Mathf.PI);
         float distance = Random.Range(_minObjectDistance, _maxObjectDistance);
         float height = Random.Range(_minObjectHeight, _maxObjectHeight);
         Vector3 newPos = new Vector3(Mathf.Cos(angle) * distance, height,
                                      Mathf.Sin(angle) * distance);
-
+        */
         // Moves the parent to the new position (siblings relative distance from their parent is 0).
-        transform.parent.localPosition = newPos;
+        //transform.parent.localPosition = newPos;
+        transform.parent.position = allPositions[selectedPos].position;
+        transform.parent.rotation = allPositions[selectedPos].rotation;
+       // transform.localScale = allPositions[selectedPos].localScale;
 
-        randomSib.SetActive(true);
+       randomSib.SetActive(true);
         gameObject.SetActive(false);
         SetMaterial(false);
     }
@@ -109,6 +148,11 @@ public class ObjectController : MonoBehaviour
         TeleportRandomly();
     }
 
+    public void Init()
+    {
+        findTreasurePositions();
+        TeleportRandomly();
+    }
     /// <summary>
     /// Sets this instance's material according to gazedAt status.
     /// </summary>

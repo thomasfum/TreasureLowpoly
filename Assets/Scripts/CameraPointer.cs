@@ -60,6 +60,9 @@ public class CameraPointer : MonoBehaviour
     {
         GazeRingTimer.enabled = false;
         audioSource = GameObject.Find("sound_2").GetComponent<AudioSource>();
+                
+        ObjectController.InitFirst();
+        
     }
 
     private bool isObjectController(GameObject go)
@@ -137,7 +140,7 @@ public class CameraPointer : MonoBehaviour
         int layerMaskObjects = 1 << 6;
         if (Physics.Raycast(transform.position, transform.forward, out hit, _maxDistance, layerMaskObjects))
         {
-            Debug.Log("---->hit");
+           // Debug.Log("---->hit");
             // New GameObject detected in front of the camera.
             if (_gazedAtObject != hit.transform.gameObject)
             {
