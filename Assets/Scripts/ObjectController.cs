@@ -45,14 +45,17 @@ public class ObjectController : MonoBehaviour
     private Renderer _myRenderer;
     private Vector3 _startingPosition;
     private AudioSource audioSource;
-    Transform[] allPositions;
+    Transform[][] allPositions;
     private static int selectedPos=-1;
 
     private void findTreasurePositions()
     {
-        GameObject TreasurePositions = GameObject.Find("TreasurePositions");
-        //Debug.Log("---> TreasurePositions:" + TreasurePositions);
-        allPositions = TreasurePositions.GetComponentsInChildren<Transform>(true);
+        allPositions = new Transform[LevelManager.GetMaxLevel()][];
+        for (int i = 0; i < LevelManager.GetMaxLevel(); i++)
+        { 
+            GameObject TreasurePositions = GameObject.Find("TreasurePositions_L"+(i+1));
+            allPositions[i] = TreasurePositions.GetComponentsInChildren<Transform>(true);
+        }
         /*
          * Debug.Log("---> TreasurePositions Nb: " + (allPositions.Length - 1));
         foreach (Transform child in allPositions)
@@ -91,10 +94,10 @@ public class ObjectController : MonoBehaviour
     public void TeleportRandomly()
     {
         //find
-        int NewselectedPos = Random.Range(1, allPositions.Length);
+        int NewselectedPos = Random.Range(1, allPositions[LevelManager.GetCurrentLevel()-1].Length);
         if (selectedPos == NewselectedPos)
             NewselectedPos++;
-        if (NewselectedPos > allPositions.Length - 1)
+        if (NewselectedPos > allPositions[LevelManager.GetCurrentLevel()-1].Length - 1)
             NewselectedPos = 1;
         selectedPos = NewselectedPos;
 
@@ -113,8 +116,8 @@ public class ObjectController : MonoBehaviour
         */
         // Moves the parent to the new position (siblings relative distance from their parent is 0).
         //transform.parent.localPosition = newPos;
-        transform.parent.position = allPositions[selectedPos].position;
-        transform.parent.rotation = allPositions[selectedPos].rotation;
+        transform.parent.position = allPositions[LevelManager.GetCurrentLevel()-1][selectedPos].position;
+        transform.parent.rotation = allPositions[LevelManager.GetCurrentLevel()-1][selectedPos].rotation;
        // transform.localScale = allPositions[selectedPos].localScale;
 
        randomSib.SetActive(true);
@@ -144,6 +147,7 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void OnPointerClick()
     {
+        LevelManager.IncreaseTreasureCount();
         audioSource.Play();
         TeleportRandomly();
     }

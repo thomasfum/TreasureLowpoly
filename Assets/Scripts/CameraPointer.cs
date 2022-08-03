@@ -1,9 +1,10 @@
-//reste a faire
-// - mode sans VR
-// - repositionner les tresors par rapport au sol
-// - animation tresor
-// - compteur tresor
-
+//Todo:
+// - mode without VR
+// - animate treasure ?
+// - do not step on water
+// - tree coliders ?
+// - rock coliders 
+// - sound when level completed
 
 
 //-----------------------------------------------------------------------
