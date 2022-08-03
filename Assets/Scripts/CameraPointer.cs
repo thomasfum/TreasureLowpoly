@@ -1,7 +1,6 @@
 //Todo:
 // - mode without VR
 // - animate treasure ?
-// - sound when level completed
 // - help is no treasure found: anim
 // - wind
 

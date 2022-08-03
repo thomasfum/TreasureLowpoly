@@ -13,7 +13,9 @@ public class LevelManager : MonoBehaviour
     static private TextMeshProUGUI TxtScore = null;
     static private TextMeshProUGUI TxtLevel = null;
     static private TextMeshProUGUI TxtMessage = null;
-    
+
+    static private AudioSource audioSource;
+
 
     static private int MaxLevel = 4;
     static private int[] TotalTreasurePerLevel = { 2, 3, 4, 5 };
@@ -37,7 +39,9 @@ public class LevelManager : MonoBehaviour
             TxtMessage = GameObject.Find("HUD_Message").GetComponent<TextMeshProUGUI>();
             TxtMessage.text = "";
         }
-        
+
+        audioSource = GameObject.Find("sound_3").GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -90,6 +94,7 @@ public class LevelManager : MonoBehaviour
         TreasureCount++;
         if(TreasureCount >= TotalTreasurePerLevel[Level - 1])
         {
+            audioSource.Play();
             TreasureCount = 0;
             Level++;
             if (Level > MaxLevel)
