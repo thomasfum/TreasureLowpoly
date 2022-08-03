@@ -1,7 +1,6 @@
 //Todo:
 // - mode without VR
 // - animate treasure ?
-// - do not step on water
 // - tree coliders ?
 // - rock coliders 
 // - sound when level completed
@@ -116,10 +115,12 @@ public class CameraPointer : MonoBehaviour
                 */
 
         //------------------------------------------------------------------------------------------------------
-        // Casts ray towards camera's down direction, to detect fllor and calculate height
+        // Casts ray towards camera's down direction, to detect floor and calculate height
         RaycastHit hitfloor;
         int layerMaskFloor = 1 << 7;
-        if (Physics.Raycast(transform.position, Vector3.down, out hitfloor, _maxDistance2, layerMaskFloor))
+        //Vector3 testPos = transform.position;
+        Vector3 testPos = transform.position + transform.forward;
+        if (Physics.Raycast(testPos, Vector3.down, out hitfloor, _maxDistance2, layerMaskFloor))
         {
             Vector3 pos = hitfloor.point; //get the position where the ray hit the ground
                                           //shoot a raycast up from that position towards the object
