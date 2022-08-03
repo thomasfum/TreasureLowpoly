@@ -43,7 +43,6 @@ public class ObjectController : MonoBehaviour
     private const float _maxObjectHeight = 3.0f;
 
     private Renderer _myRenderer;
-    private Vector3 _startingPosition;
     private AudioSource audioSource;
     Transform[][] allPositions;
     private static int selectedPos=-1;
@@ -71,7 +70,6 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void Start()
     {
-        _startingPosition = transform.parent.localPosition;
         _myRenderer = GetComponent<Renderer>();
         SetMaterial(false);
         audioSource = GameObject.Find("sound_1").GetComponent<AudioSource>();

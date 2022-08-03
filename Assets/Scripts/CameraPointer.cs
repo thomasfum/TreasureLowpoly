@@ -2,7 +2,8 @@
 // - mode without VR
 // - animate treasure ?
 // - sound when level completed
-
+// - help is no treasure found: anim
+// - wind
 
 //-----------------------------------------------------------------------
 // <copyright file="CameraPointer.cs" company="Google LLC">
@@ -48,18 +49,19 @@ public class CameraPointer : MonoBehaviour
     public float maxYAngle = 80f;
     private Vector2 currentRotation;
     private bool onFloor = true;
-    
+    public GameObject [] info;
     private const float _maxDistance2 = 1000;
    
     private AudioSource audioSource;
+
+    private float TimeSinceLastTreasureOrInfo = 0;
 
     void Start()
     {
         GazeRingTimer.enabled = false;
         audioSource = GameObject.Find("sound_2").GetComponent<AudioSource>();
-                
         ObjectController.InitFirst();
-        
+        TimeSinceLastTreasureOrInfo = 0;
     }
 
     private bool isObjectController(GameObject go)
@@ -78,19 +80,101 @@ public class CameraPointer : MonoBehaviour
         return false;
     }
 
+
+    private IEnumerator Fade(int position)
+    {
+
+        var cubeRenderer = info[position - 1].GetComponent<Renderer>();
+        Color c = cubeRenderer.material.color;
+        for (float alpha = 1f; alpha >= 0; alpha -= 0.1f)
+        {
+            if (alpha < 0.1)
+                info[position - 1].SetActive(false);
+
+            c.a = alpha;
+            cubeRenderer.material.color = c;
+            //Debug.Log("Fade:"+alpha);
+            if (alpha == 1f)
+                yield return new WaitForSeconds(2f);
+            else
+                yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    // 1 left
+    // 2 front left
+    // 3 center
+    // 4 front right
+    // 5 right
+    void ShowIndicator( int position)
+    {
+        info[position - 1].SetActive(true);
+        StartCoroutine(Fade(position));
+    }
+
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
     public void Update()
     {
 
-        
+        TimeSinceLastTreasureOrInfo += Time.deltaTime;
+        if (TimeSinceLastTreasureOrInfo >= 10)//10sec
+        {
+            GameObject Treasure = GameObject.Find("Treasure");
+            //Debug.Log("---> Treasure:" + Treasure);
+            Transform[] activeTreasure = Treasure.GetComponentsInChildren<Transform>(false);
+            if (activeTreasure.Length > 0)
+            {
+                Vector2 cam = new Vector2(this.transform.forward.x, this.transform.forward.z);
+                Vector2 treasure = new Vector2(activeTreasure[0].position.x, activeTreasure[0].position.z);
 
+                float Angle = Vector2.SignedAngle(cam, treasure);
+
+                //Debug.Log("Need Info about treasure: " + treasure + " vs " + cam+" a="+ Angle);
+                if ((Angle > -15) && (Angle < 15))
+                {
+                    Debug.Log("treasure in front:" + Angle);
+                    ShowIndicator(3);
+                }
+                else
+                {
+                    if (Angle < 0)
+                    {
+                        if (Angle > -25)
+                        {
+                            Debug.Log("treasure at front right:" + Angle);
+                            ShowIndicator(4);
+                        }
+                        if (Angle <= -25)
+                        {
+                            Debug.Log("treasure at right:" + Angle);
+                            ShowIndicator(5);
+                        }
+                    }
+                    else
+                    {
+                        if (Angle > 25)
+                        {
+                            Debug.Log("treasure at left:" + Angle);
+                            ShowIndicator(1);
+                        }
+                        if (Angle <= 25)
+                        {
+                            Debug.Log("treasure at front left:" + Angle);
+                            ShowIndicator(2);
+                        }
+                    }
+                }
+
+
+            }
+            TimeSinceLastTreasureOrInfo = 0;
+        }
         //------------------------------------------------------------------------------------------------------
         // Rotate camera with mouse in unity editor
         if (Input.GetMouseButton(0))
         {
-            
             currentRotation.x += Input.GetAxis("Mouse X") * sensitivity;
             currentRotation.y -= Input.GetAxis("Mouse Y") * sensitivity;
             currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
@@ -154,6 +238,7 @@ public class CameraPointer : MonoBehaviour
                     GazeRingTimer.enabled = false;
                     GazeRing.enabled = true;
                     _gazedAtObject?.SendMessage("OnPointerExit");
+                    TimeSinceLastTreasureOrInfo = 0;
                 }
                 _gazedAtObject = hit.transform.gameObject;
                 if (isObjectController(_gazedAtObject))
@@ -161,6 +246,7 @@ public class CameraPointer : MonoBehaviour
                     _gazedAtObject.SendMessage("OnPointerEnter");
                     bGrowing = true;
                     GrowingTime = 0;
+                    TimeSinceLastTreasureOrInfo = 0;
                     /*
                     fire_start_time = Time.time;
                     //MyLog.Log("hit object");
@@ -224,7 +310,7 @@ public class CameraPointer : MonoBehaviour
             GazeRing.size = new Vector2(valueToLerp, valueToLerp);
             if (ShrinkingTime > durat)
             {
-               
+                TimeSinceLastTreasureOrInfo = 0;
                 bShrinking = false;
             }
         }
@@ -233,6 +319,7 @@ public class CameraPointer : MonoBehaviour
             {
                 _gazedAtObject?.SendMessage("OnPointerClick");
                 fire_start_time = 0;
+                TimeSinceLastTreasureOrInfo = 0;
                 //MyLog.Log("hit object fire");
             }
         if (GazeRingTimer.enabled)
