@@ -1,8 +1,6 @@
 //Todo:
 // - mode without VR
 // - animate treasure ?
-// - tree coliders ?
-// - rock coliders 
 // - sound when level completed
 
 
@@ -45,13 +43,12 @@ public class CameraPointer : MonoBehaviour
     private float GrowingTime = 0;
     private bool bShrinking = false;
     private float ShrinkingTime = 0;
-
-
+    
     public float sensitivity = 10f;
     public float maxYAngle = 80f;
     private Vector2 currentRotation;
     private bool onFloor = true;
-
+    
     private const float _maxDistance2 = 1000;
    
     private AudioSource audioSource;
@@ -80,11 +77,14 @@ public class CameraPointer : MonoBehaviour
         }
         return false;
     }
+
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
     public void Update()
     {
+
+        
 
         //------------------------------------------------------------------------------------------------------
         // Rotate camera with mouse in unity editor
@@ -246,30 +246,42 @@ public class CameraPointer : MonoBehaviour
         {
             if (onFloor == true)
             {
-                //move forward
-                float angle = transform.rotation.eulerAngles.x;
-                //MyLog.Log("---> "+ angle);
-                //Debug.Log("---> "+ angle);
-                if ((angle > 8) && (angle < 35))
-                {
-                    /*
-                    Vector3 dir = (transform.forward / (2 * angle)) * Time.deltaTime * 100;
-                    audioSource.pitch = 20 / angle;
-                    */
-                    Vector3 dir = (transform.forward * angle / 800) * Time.deltaTime * 100;
-                    audioSource.pitch = 0.8f + (angle / 40);
 
-                    dir.y = 0;
-                    transform.position += dir;
-                    if (!audioSource.isPlaying)
+                bool col=Collision.isColliding();
+                float angle = transform.rotation.eulerAngles.x;
+                if (col == false)
+                {
+
+                    //move forward
+                   
+                    //MyLog.Log("---> "+ angle);
+                    //Debug.Log("---> "+ angle);
+                    if ((angle > 8) && (angle < 35))
                     {
-                        audioSource.loop = true;
-                        audioSource.Play();
+                        /*
+                        Vector3 dir = (transform.forward / (2 * angle)) * Time.deltaTime * 100;
+                        audioSource.pitch = 20 / angle;
+                        */
+                        Vector3 dir = (transform.forward * angle / 800) * Time.deltaTime * 100;
+                        audioSource.pitch = 0.8f + (angle / 40);
+
+                        dir.y = 0;
+                        transform.position += dir;
+                        if (!audioSource.isPlaying)
+                        {
+                            audioSource.loop = true;
+                            audioSource.Play();
+                        }
                     }
+                    else
+                        //audioSource.Stop();
+                        audioSource.loop = false;
                 }
                 else
-                    //audioSource.Stop();
+                {
+                   // Debug.Log("------------>colllll+ " + Collision.getCollidingName());
                     audioSource.loop = false;
+                }
             }
             else
                 //audioSource.Stop();
