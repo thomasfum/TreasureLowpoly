@@ -25,7 +25,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.XR.Management;
 
 /// <summary>
 /// Sends messages to gazed GameObject.
@@ -56,6 +56,16 @@ public class CameraPointer : MonoBehaviour
     
 
     private float TimeSinceLastTreasureOrInfo = 0;
+    private bool needPad = false;
+
+    /// Step #1
+    /// We need a simple reference of joystick in the script
+    /// that we need add it.
+    /// </summary>
+    [SerializeField] private bl_Joystick Joystick;//Joystick reference for assign in inspector
+
+    [SerializeField] private float Speed = 5;
+
 
     void Start()
     {
@@ -63,6 +73,7 @@ public class CameraPointer : MonoBehaviour
         audioSource = GameObject.Find("sound_2").GetComponent<AudioSource>();
         ObjectController.InitFirst();
         TimeSinceLastTreasureOrInfo = 0;
+
 
     }
 
@@ -108,6 +119,18 @@ public class CameraPointer : MonoBehaviour
     /// </summary>
     public void Update()
     {
+
+        if (XRGeneralSettings.Instance != null)
+        {
+            if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
+            {
+                Joystick.gameObject.SetActive(false);
+                needPad = false;
+            }
+            else
+                needPad = true;
+        }
+
 
         TimeSinceLastTreasureOrInfo += Time.deltaTime;
         if (TimeSinceLastTreasureOrInfo >= 10)//10sec
@@ -164,7 +187,8 @@ public class CameraPointer : MonoBehaviour
         }
         //------------------------------------------------------------------------------------------------------
         // Rotate camera with mouse in unity editor
-        if (Input.GetMouseButton(0))
+        
+        if (Input.GetMouseButton(1))
         {
             currentRotation.x += Input.GetAxis("Mouse X") * sensitivity;
             currentRotation.y -= Input.GetAxis("Mouse Y") * sensitivity;
@@ -172,7 +196,24 @@ public class CameraPointer : MonoBehaviour
             currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
             transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
         }
-       
+
+
+        //------------------------------------------------------------------------------------------------------
+        // Rotate camera with pad
+        if(needPad==true)
+        {
+            float v = Joystick.Vertical; //get the vertical value of joystick
+            float h = Joystick.Horizontal;//get the horizontal value of joystick
+                                          // Debug.Log("---> " + v + " , " + h);
+            currentRotation.x += h * Speed;
+            currentRotation.y -= v * Speed;
+            //currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
+            currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
+
+            //Debug.Log("---> "  + h+ "= "+ currentRotation.x);
+
+            transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
+        }
 
         //------------------------------------------------------------------------------------------------------
         // Casts ray towards camera's down direction, to detect floor and calculate height
@@ -202,7 +243,7 @@ public class CameraPointer : MonoBehaviour
         int layerMaskObjects = 1 << 6;
         if (Physics.Raycast(transform.position, transform.forward, out hit, _maxDistance, layerMaskObjects))
         {
-           // Debug.Log("---->hit");
+            // Debug.Log("---->hit");
             // New GameObject detected in front of the camera.
             if (_gazedAtObject != hit.transform.gameObject)
             {
@@ -267,7 +308,7 @@ public class CameraPointer : MonoBehaviour
             GrowingTime += Time.deltaTime;
             float valueToLerp = Mathf.Lerp(1f, 3f, GrowingTime / durat);
             GazeRing.size = new Vector2(valueToLerp, valueToLerp);
-            if (GrowingTime> durat)
+            if (GrowingTime > durat)
             {
                 fire_start_time = Time.time;
                 //MyLog.Log("hit object");
@@ -301,7 +342,7 @@ public class CameraPointer : MonoBehaviour
         if (GazeRingTimer.enabled)
         {
             //Rotate gaze
-            GazeRingTimer.transform.Rotate(Vector3.forward, Time.deltaTime*400);
+            GazeRingTimer.transform.Rotate(Vector3.forward, Time.deltaTime * 400);
             audioSource.loop = false;
         }
         else
@@ -309,7 +350,7 @@ public class CameraPointer : MonoBehaviour
             if (onFloor == true)
             {
 
-                bool col=Collision.isColliding();
+                bool col = Collision.isColliding();
                 float angle = transform.rotation.eulerAngles.x;
                 if (col == false)
                 {
@@ -334,15 +375,17 @@ public class CameraPointer : MonoBehaviour
                 }
                 else//collision
                 {
-                   // Debug.Log("------------>colllll+ " + Collision.getCollidingName());
+                    // Debug.Log("------------>colllll+ " + Collision.getCollidingName());
                     audioSource.loop = false;
                 }
             }
             else // not on floor
                 audioSource.loop = false;
         }
-     
 
        
+       
+       
     }
+    
 }

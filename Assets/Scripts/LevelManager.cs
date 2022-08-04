@@ -59,19 +59,27 @@ public class LevelManager : MonoBehaviour
         if (TxtLevel != null)
             TxtLevel.text = "Level " + Level;
     }
-    private static void DisplayMessage(string message)
+    private static void DisplayMessage(string message, bool exit)
     {
         TxtMessage.text = message;
-        instance.StartCoroutine(Fade());
+        instance.StartCoroutine(Fade(exit));
     }
-    private static IEnumerator Fade()
+    private static IEnumerator Fade(bool exit)
     {
         Color c = TxtMessage.color;
         for (float alpha = 1f; alpha >= 0; alpha -= 0.1f)
         {
             if (alpha < 0.1)
+            {
                 TxtMessage.text = "";
 
+                if (exit == true)
+                {
+                    GameObject Main = GameObject.Find("Main");
+                    Main?.SendMessage("BackToWelcomeScene");
+                }
+
+            }
             c.a = alpha;
             TxtMessage.color = c;
             //Debug.Log("Fade:"+alpha);
@@ -91,6 +99,8 @@ public class LevelManager : MonoBehaviour
     }
     public static void IncreaseTreasureCount()
     {
+        
+
         TreasureCount++;
         if(TreasureCount >= TotalTreasurePerLevel[Level - 1])
         {
@@ -100,10 +110,10 @@ public class LevelManager : MonoBehaviour
             if (Level > MaxLevel)
             {
                 Level--;
-                DisplayMessage("Finished");
+                DisplayMessage("Finished", true);
             }
             else
-                DisplayMessage("Level Completed");
+                DisplayMessage("Level Completed",false);
             DisplayLevel();
         }
         DisplayScore();

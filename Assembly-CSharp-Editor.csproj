@@ -719,6 +719,18 @@
     <Reference Include="UnityEditor.SpatialTracking">
       <HintPath>Library\ScriptAssemblies\UnityEditor.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.XR.ARCore.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.XR.ARCore.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.ARSubsystems.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.XR.ARSubsystems.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.ARCore">
+      <HintPath>Library\ScriptAssemblies\Unity.XR.ARCore.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.XR.ARSubsystems">
+      <HintPath>Library\ScriptAssemblies\Unity.XR.ARSubsystems.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">

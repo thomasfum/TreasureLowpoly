@@ -19,6 +19,7 @@
 using System.Collections;
 using Google.XR.Cardboard;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
 
@@ -53,7 +54,10 @@ public class VrModeController : MonoBehaviour
     {
         get
         {
-            return true;// XRGeneralSettings.Instance.Manager.isInitializationComplete;
+            if (XRGeneralSettings.Instance == null)
+                return true;
+            else 
+                return XRGeneralSettings.Instance.Manager.isInitializationComplete;
         }
     }
 
@@ -102,11 +106,13 @@ public class VrModeController : MonoBehaviour
         }
         else
         {
+            /*
             // TODO(b/171727815): Add a button to switch to VR mode.
             if (_isScreenTouched)
             {
                 EnterVR();
             }
+            */
         }
     }
 
@@ -122,13 +128,21 @@ public class VrModeController : MonoBehaviour
         }
     }
 
+
+    public void BackToWelcomeScene()
+    {
+        ExitVR();
+    }
+
     /// <summary>
     /// Exits VR mode.
     /// </summary>
     private void ExitVR()
     {
-        StopXR();
-        Application.Quit();
+        if (XRGeneralSettings.Instance != null)
+            StopXR();
+        //Application.Quit();
+        SceneManager.LoadScene("welcome", LoadSceneMode.Single);
     }
 
     /// <summary>
