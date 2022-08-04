@@ -1,7 +1,6 @@
 //Todo:
 // - mode without VR
 // - animate treasure ?
-// - help is no treasure found: anim
 // - wind
 
 //-----------------------------------------------------------------------
@@ -49,9 +48,12 @@ public class CameraPointer : MonoBehaviour
     private Vector2 currentRotation;
     private bool onFloor = true;
     public GameObject [] info;
+    public Transform Effect;
+    private Transform currentFX = null;
     private const float _maxDistance2 = 1000;
-   
+    
     private AudioSource audioSource;
+    
 
     private float TimeSinceLastTreasureOrInfo = 0;
 
@@ -61,6 +63,7 @@ public class CameraPointer : MonoBehaviour
         audioSource = GameObject.Find("sound_2").GetComponent<AudioSource>();
         ObjectController.InitFirst();
         TimeSinceLastTreasureOrInfo = 0;
+
     }
 
     private bool isObjectController(GameObject go)
@@ -80,24 +83,13 @@ public class CameraPointer : MonoBehaviour
     }
 
 
-    private IEnumerator Fade(int position)
+    IEnumerator DestroyFx(float time)
     {
-
-        var cubeRenderer = info[position - 1].GetComponent<Renderer>();
-        Color c = cubeRenderer.material.color;
-        for (float alpha = 1f; alpha >= 0; alpha -= 0.1f)
-        {
-            if (alpha < 0.1)
-                info[position - 1].SetActive(false);
-
-            c.a = alpha;
-            cubeRenderer.material.color = c;
-            //Debug.Log("Fade:"+alpha);
-            if (alpha == 1f)
-                yield return new WaitForSeconds(2f);
-            else
-                yield return new WaitForSeconds(0.2f);
-        }
+        yield return new WaitForSeconds(time);
+        // Code to execute after the delay
+        if(currentFX!=null)
+            Destroy(currentFX.gameObject);
+        currentFX = null;
     }
 
     // 1 left
@@ -107,8 +99,8 @@ public class CameraPointer : MonoBehaviour
     // 5 right
     void ShowIndicator( int position)
     {
-        info[position - 1].SetActive(true);
-        StartCoroutine(Fade(position));
+        currentFX= Instantiate(Effect, info[position - 1].transform);
+        StartCoroutine(DestroyFx(5));
     }
 
     /// <summary>
@@ -180,22 +172,7 @@ public class CameraPointer : MonoBehaviour
             currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
             transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
         }
-        /*
-                //float angleY = currentRotation.y;
-                float angle = transform.rotation.eulerAngles.x;
-                MyLog.Log("---> "+ angle);
-                //Debug.Log("---> "+ angle);
-                if ((angle > 10) && (angle < 35))
-                {
-                    Vector3 dir = (transform.forward / (2 * angle)) * Time.deltaTime * 100;
-                    dir.y = 0;
-                    transform.position += dir;
-                    if (!audioSource.isPlaying)
-                        audioSource.Play();
-                }
-                else
-                    audioSource.Stop();
-                */
+       
 
         //------------------------------------------------------------------------------------------------------
         // Casts ray towards camera's down direction, to detect floor and calculate height
@@ -325,7 +302,6 @@ public class CameraPointer : MonoBehaviour
         {
             //Rotate gaze
             GazeRingTimer.transform.Rotate(Vector3.forward, Time.deltaTime*400);
-            //audioSource.Stop();
             audioSource.loop = false;
         }
         else
@@ -337,17 +313,11 @@ public class CameraPointer : MonoBehaviour
                 float angle = transform.rotation.eulerAngles.x;
                 if (col == false)
                 {
-
                     //move forward
-                   
                     //MyLog.Log("---> "+ angle);
                     //Debug.Log("---> "+ angle);
                     if ((angle > 8) && (angle < 35))
                     {
-                        /*
-                        Vector3 dir = (transform.forward / (2 * angle)) * Time.deltaTime * 100;
-                        audioSource.pitch = 20 / angle;
-                        */
                         Vector3 dir = (transform.forward * angle / 800) * Time.deltaTime * 100;
                         audioSource.pitch = 0.8f + (angle / 40);
 
@@ -360,17 +330,15 @@ public class CameraPointer : MonoBehaviour
                         }
                     }
                     else
-                        //audioSource.Stop();
                         audioSource.loop = false;
                 }
-                else
+                else//collision
                 {
                    // Debug.Log("------------>colllll+ " + Collision.getCollidingName());
                     audioSource.loop = false;
                 }
             }
-            else
-                //audioSource.Stop();
+            else // not on floor
                 audioSource.loop = false;
         }
      
