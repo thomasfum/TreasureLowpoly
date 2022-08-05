@@ -11,13 +11,6 @@ public class Welcome : MonoBehaviour
 
     void Awake()
     {
-
-       // XRGeneralSettings.Instance.Manager.DeinitializeLoader();
-
-        //XRSettings.LoadDeviceByName("");
-        //XRSettings.enabled = false;
-        
-
     }
 
     // Start is called before the first frame update
@@ -73,20 +66,18 @@ public class Welcome : MonoBehaviour
    
     public void ButtonVR()
     {
-        Debug.Log("Button");
-        //XRSettings.LoadDeviceByName("");
-        //XRSettings.enabled = true;
-        //XRGeneralSettings.Instance.Manager.InitializeLoader();
+        Debug.Log("Button VR");
         StartCoroutine(StartXR("LowPloly"));
-       
     }
     public void ButtonNoVR()
     {
-        Debug.Log("Button");
-        //XRSettings.LoadDeviceByName("");
-        //XRSettings.enabled = true;
-        //XRGeneralSettings.Instance.Manager.InitializeLoader();
+        Debug.Log("Button No VR");
         StartNoXR("LowPloly");
+    }
 
+    public void ButtonQuit()
+    {
+        Debug.Log("Button Quit");
+       Application.Quit();
     }
 }

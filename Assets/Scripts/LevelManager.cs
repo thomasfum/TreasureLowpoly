@@ -13,6 +13,7 @@ public class LevelManager : MonoBehaviour
     static private TextMeshProUGUI TxtScore = null;
     static private TextMeshProUGUI TxtLevel = null;
     static private TextMeshProUGUI TxtMessage = null;
+    static private SpriteRenderer TreasureUI =null;
 
     static private AudioSource audioSource;
 
@@ -20,6 +21,9 @@ public class LevelManager : MonoBehaviour
     static private int MaxLevel = 4;
     static private int[] TotalTreasurePerLevel = { 2, 3, 4, 5 };
     public static LevelManager instance;
+
+    private Rect Safe;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,14 +43,35 @@ public class LevelManager : MonoBehaviour
             TxtMessage = GameObject.Find("HUD_Message").GetComponent<TextMeshProUGUI>();
             TxtMessage.text = "";
         }
+        if (GameObject.Find("TreasureUI") != null)
+        {
+            TreasureUI = GameObject.Find("TreasureUI").GetComponent<SpriteRenderer>();
+        }
+        else
+            Debug.LogError("TreasureUI not found");
+        
+
 
         audioSource = GameObject.Find("sound_3").GetComponent<AudioSource>();
+        /*
+         Safe = Screen.safeArea;
+         Debug.Log("safe x="+(int)Safe.xMin);
+         //TxtScore..transform.position.x = 100;
+         TxtScore.GetComponent<RectTransform>().localPosition += new Vector3((int)+Safe.xMin, 0, 0);
+         TxtLevel.GetComponent<RectTransform>().localPosition += new Vector3((int)+Safe.xMin, 0, 0);
+        */
 
+        TxtScore.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width/30, 0, 0);
+        TxtLevel.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width / 30, 0, 0);
+        TreasureUI.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width / 30, 0, 0);
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+
+      //  MyLog.Log("->" + Screen.safeArea.xMin+ " - "+Screen.safeArea.xMax+ " - " + Screen.safeArea.yMin + " - " + Screen.safeArea.yMax);
     }
 
     private static void DisplayScore()

@@ -1,7 +1,7 @@
 //Todo:
-// - mode without VR
-// - animate treasure ?
-// - wind
+// - animate treasure ? fade
+// - wind => no
+
 
 //-----------------------------------------------------------------------
 // <copyright file="CameraPointer.cs" company="Google LLC">
@@ -24,6 +24,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.XR.Management;
 
@@ -57,11 +58,12 @@ public class CameraPointer : MonoBehaviour
 
     private float TimeSinceLastTreasureOrInfo = 0;
     private bool needPad = false;
+    private Canvas m_Canvas=null;
 
-    /// Step #1
-    /// We need a simple reference of joystick in the script
-    /// that we need add it.
-    /// </summary>
+    [SerializeField] private RectTransform ExitImage;
+
+
+
     [SerializeField] private bl_Joystick Joystick;//Joystick reference for assign in inspector
 
     [SerializeField] private float Speed = 5;
@@ -74,7 +76,17 @@ public class CameraPointer : MonoBehaviour
         ObjectController.InitFirst();
         TimeSinceLastTreasureOrInfo = 0;
 
+        GameObject tempObject = GameObject.Find("Canvas");
+        if (tempObject != null)
+        {
+            //If we found the object , get the Canvas component from it.
+            m_Canvas = tempObject.GetComponent<Canvas>();
 
+        }
+        else
+        {
+            Debug.LogError("Canvas not found");
+        }
     }
 
     private bool isObjectController(GameObject go)
@@ -114,12 +126,26 @@ public class CameraPointer : MonoBehaviour
         StartCoroutine(DestroyFx(5));
     }
 
+
+    void OnDrawGizmosSelected()
+    {
+        GameObject Treasure = GameObject.Find("Treasure");
+        Transform[] activeTreasure = Treasure.GetComponentsInChildren<Transform>(false);
+        Vector3 cam = new Vector3(this.transform.forward.x, 0, this.transform.forward.z);
+        Vector3 treasure = new Vector3(activeTreasure[0].localPosition.x - this.transform.position.x , 0, activeTreasure[0].localPosition.z-this.transform.position.z);
+
+        Gizmos.color = Color.magenta;
+        //Debug.Log("Gizmo");
+        Gizmos.DrawRay(this.transform.localPosition, cam*10);
+        Gizmos.DrawRay(this.transform.localPosition, treasure);
+    }
+
     /// <summary>
     /// Update is called once per frame.
     /// </summary>
     public void Update()
     {
-
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
         if (XRGeneralSettings.Instance != null)
         {
             if (XRGeneralSettings.Instance.Manager.isInitializationComplete)
@@ -130,6 +156,9 @@ public class CameraPointer : MonoBehaviour
             else
                 needPad = true;
         }
+#else
+        needPad = true;
+#endif
 
 
         TimeSinceLastTreasureOrInfo += Time.deltaTime;
@@ -140,14 +169,22 @@ public class CameraPointer : MonoBehaviour
             Transform[] activeTreasure = Treasure.GetComponentsInChildren<Transform>(false);
             if (activeTreasure.Length > 0)
             {
-                Vector2 cam = new Vector2(this.transform.forward.x, this.transform.forward.z);
-                Vector2 treasure = new Vector2(activeTreasure[0].position.x, activeTreasure[0].position.z);
+                // Vector2 cam = new Vector2(this.transform.forward.x, this.transform.forward.z);
+                // Vector2 treasure = new Vector2( activeTreasure[0].position.x - this.transform.position.x,  activeTreasure[0].position.z- this.transform.position.z);
+
+                Vector2 cam = new Vector2(transform.forward.x, transform.forward.z);
+                Vector2 treasure = new Vector2( activeTreasure[0].localPosition.x- transform.position.x, activeTreasure[0].localPosition.z- transform.position.z);
+
+
 
                 float Angle = Vector2.SignedAngle(cam, treasure);
+
+               
 
                 //Debug.Log("Need Info about treasure: " + treasure + " vs " + cam+" a="+ Angle);
                 if ((Angle > -15) && (Angle < 15))
                 {
+                    MyLog.Log("front:" + Angle);
                     Debug.Log("treasure in front:" + Angle);
                     ShowIndicator(3);
                 }
@@ -157,12 +194,14 @@ public class CameraPointer : MonoBehaviour
                     {
                         if (Angle > -25)
                         {
-                            Debug.Log("treasure at front right:" + Angle);
+                            MyLog.Log("front right:" + Angle);
+                            Debug.Log("front right:" + Angle);
                             ShowIndicator(4);
                         }
                         if (Angle <= -25)
                         {
-                            Debug.Log("treasure at right:" + Angle);
+                            MyLog.Log("right:" + Angle);
+                            Debug.Log("right:" + Angle);
                             ShowIndicator(5);
                         }
                     }
@@ -170,11 +209,13 @@ public class CameraPointer : MonoBehaviour
                     {
                         if (Angle > 25)
                         {
-                            Debug.Log("treasure at left:" + Angle);
+                            MyLog.Log("left:" + Angle);
+                            Debug.Log("left:" + Angle);
                             ShowIndicator(1);
                         }
                         if (Angle <= 25)
                         {
+                            MyLog.Log("front left:" + Angle);
                             Debug.Log("treasure at front left:" + Angle);
                             ShowIndicator(2);
                         }
@@ -213,6 +254,24 @@ public class CameraPointer : MonoBehaviour
             //Debug.Log("---> "  + h+ "= "+ currentRotation.x);
 
             transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
+
+
+            Vector3 position = bl_JoystickUtils.TouchPosition(m_Canvas, 0);
+            float d=Vector2.Distance(ExitImage.position, position);
+            //Debug.Log("---> pos = " + position+ " d="+d);
+            if (d < 0.2f)
+            {
+#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
+                GameObject Main = GameObject.Find("Main");
+                Main?.SendMessage("BackToWelcomeScene");
+#else
+                if (Input.GetMouseButton(0))
+                {
+                    GameObject Main = GameObject.Find("Main");
+                    Main?.SendMessage("BackToWelcomeScene");
+                }
+#endif
+            }
         }
 
         //------------------------------------------------------------------------------------------------------

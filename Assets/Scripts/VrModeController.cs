@@ -66,6 +66,8 @@ public class VrModeController : MonoBehaviour
     /// </summary>
     public void Start()
     {
+
+
         // Saves the main camera from the scene.
         _mainCamera = Camera.main;
 

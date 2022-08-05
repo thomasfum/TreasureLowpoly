@@ -86,6 +86,31 @@ public class ObjectController : MonoBehaviour
         allTreasure[1].gameObject.SetActive(true);
         allTreasure[1].SendMessage("Init");
     }
+
+
+
+    private static IEnumerator Fade(GameObject g, GameObject randomSib, Vector3 pos, Quaternion rot)
+    {
+        Color c = g.GetComponent<MeshRenderer>().material.color;
+        for (float alpha = 1f; alpha >= 0; alpha -= 0.1f)
+        {
+            if (alpha < 0.1)
+            {
+                c.a = 1;
+                g.GetComponent<MeshRenderer>().material.color = c;
+                g.transform.parent.position = pos;
+                g.transform.parent.rotation = rot;
+                randomSib.SetActive(true);
+                g.SetActive(false);
+                break;
+            }
+            c.a = alpha;
+            g.GetComponent<MeshRenderer>().material.color = c;
+            Debug.Log("Fade:"+alpha);
+             yield return new WaitForSeconds(0.2f);
+        }
+    }
+
     /// <summary>
     /// Teleports this instance randomly when triggered by a pointer click.
     /// </summary>
@@ -104,21 +129,17 @@ public class ObjectController : MonoBehaviour
         int numSibs = transform.parent.childCount;
         sibIdx = (sibIdx + Random.Range(1, numSibs)) % numSibs;
         GameObject randomSib = transform.parent.GetChild(sibIdx).gameObject;
-        /*
-        // Computes new object's location.
-        float angle = Random.Range(-Mathf.PI, Mathf.PI);
-        float distance = Random.Range(_minObjectDistance, _maxObjectDistance);
-        float height = Random.Range(_minObjectHeight, _maxObjectHeight);
-        Vector3 newPos = new Vector3(Mathf.Cos(angle) * distance, height,
-                                     Mathf.Sin(angle) * distance);
-        */
+        
         // Moves the parent to the new position (siblings relative distance from their parent is 0).
-        //transform.parent.localPosition = newPos;
+        
         transform.parent.position = allPositions[LevelManager.GetCurrentLevel()-1][selectedPos].position;
         transform.parent.rotation = allPositions[LevelManager.GetCurrentLevel()-1][selectedPos].rotation;
-       // transform.localScale = allPositions[selectedPos].localScale;
+       
 
        randomSib.SetActive(true);
+
+      //  StartCoroutine(Fade(gameObject, randomSib, allPositions[LevelManager.GetCurrentLevel() - 1][selectedPos].position, allPositions[LevelManager.GetCurrentLevel() - 1][selectedPos].rotation));
+
         gameObject.SetActive(false);
         SetMaterial(false);
     }
