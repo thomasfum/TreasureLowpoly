@@ -81,7 +81,6 @@ public class CameraPointer : MonoBehaviour
         {
             //If we found the object , get the Canvas component from it.
             m_Canvas = tempObject.GetComponent<Canvas>();
-
         }
         else
         {
@@ -178,50 +177,59 @@ public class CameraPointer : MonoBehaviour
 
 
                 float Angle = Vector2.SignedAngle(cam, treasure);
-
-               
-
-                //Debug.Log("Need Info about treasure: " + treasure + " vs " + cam+" a="+ Angle);
-                if ((Angle > -15) && (Angle < 15))
-                {
-                    MyLog.Log("front:" + Angle);
-                    Debug.Log("treasure in front:" + Angle);
-                    ShowIndicator(3);
-                }
-                else
-                {
-                    if (Angle < 0)
+                float Dist = Vector2.Distance(new Vector2(activeTreasure[0].localPosition.x , activeTreasure[0].localPosition.z ), new Vector2( transform.position.x, transform.position.z));
+                
+                //Debug.Log("Need Info about treasure: " + treasure + " vs " + cam+" a="+ Angle +" d="+Dist);
+                
+                    if ((Angle > -15) && (Angle < 15))
                     {
-                        if (Angle > -25)
+                        if (Dist > 10)
                         {
-                            MyLog.Log("front right:" + Angle);
-                            Debug.Log("front right:" + Angle);
-                            ShowIndicator(4);
-                        }
-                        if (Angle <= -25)
-                        {
-                            MyLog.Log("right:" + Angle);
-                            Debug.Log("right:" + Angle);
-                            ShowIndicator(5);
+                            MyLog.Log("front:" + Angle);
+                            Debug.Log("treasure in front:" + Angle);
+                            ShowIndicator(3);
                         }
                     }
                     else
                     {
-                        if (Angle > 25)
+                        if (Angle < 0)
                         {
-                            MyLog.Log("left:" + Angle);
-                            Debug.Log("left:" + Angle);
-                            ShowIndicator(1);
+                            if (Angle > -25)
+                            {
+                                if (Dist > 7)
+                                {
+                                    MyLog.Log("front right:" + Angle);
+                                    Debug.Log("front right:" + Angle);
+                                    ShowIndicator(4);
+                                }
+                            }
+                            if (Angle <= -25)
+                            {
+                                MyLog.Log("right:" + Angle);
+                                Debug.Log("right:" + Angle);
+                                ShowIndicator(5);
+                            }
                         }
-                        if (Angle <= 25)
+                        else
                         {
-                            MyLog.Log("front left:" + Angle);
-                            Debug.Log("treasure at front left:" + Angle);
-                            ShowIndicator(2);
+                            if (Angle > 25)
+                            {
+                                MyLog.Log("left:" + Angle);
+                                Debug.Log("left:" + Angle);
+                                ShowIndicator(1);
+                            }
+                            if (Angle <= 25)
+                            {
+                                if (Dist > 7)
+                                {
+                                    MyLog.Log("front left:" + Angle);
+                                    Debug.Log("treasure at front left:" + Angle);
+                                    ShowIndicator(2);
+                                }
+                            }
                         }
                     }
-                }
-
+                
 
             }
             TimeSinceLastTreasureOrInfo = 0;
@@ -398,7 +406,7 @@ public class CameraPointer : MonoBehaviour
                 TimeSinceLastTreasureOrInfo = 0;
                 //MyLog.Log("hit object fire");
             }
-        if (GazeRingTimer.enabled)
+        if (GazeRingTimer.enabled || bGrowing==true)
         {
             //Rotate gaze
             GazeRingTimer.transform.Rotate(Vector3.forward, Time.deltaTime * 400);

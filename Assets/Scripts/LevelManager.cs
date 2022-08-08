@@ -18,8 +18,8 @@ public class LevelManager : MonoBehaviour
     static private AudioSource audioSource;
 
 
-    static private int MaxLevel = 4;
-    static private int[] TotalTreasurePerLevel = { 2, 3, 4, 5 };
+    static private int MaxLevel = 5;
+    static private int[] TotalTreasurePerLevel = { 3, 3, 3, 3, 3 };
     public static LevelManager instance;
 
     private Rect Safe;
@@ -82,7 +82,7 @@ public class LevelManager : MonoBehaviour
     private static void DisplayLevel()
     {
         if (TxtLevel != null)
-            TxtLevel.text = "Level " + Level;
+            TxtLevel.text = "Level " + Level +" / " + MaxLevel;
     }
     private static void DisplayMessage(string message, bool exit)
     {
@@ -121,6 +121,11 @@ public class LevelManager : MonoBehaviour
     public static int GetMaxLevel()
     {
         return MaxLevel;
+    }
+
+    public static int GetScore()
+    {
+        return TreasureCount;
     }
     public static void IncreaseTreasureCount()
     {

@@ -116,14 +116,18 @@ public class ObjectController : MonoBehaviour
     /// </summary>
     public void TeleportRandomly()
     {
-        //find
+        //non random
+        selectedPos = LevelManager.GetScore()+1;
+        //Debug.Log("treasure index:" + selectedPos);
+        /*
+        //random
         int NewselectedPos = Random.Range(1, allPositions[LevelManager.GetCurrentLevel()-1].Length);
         if (selectedPos == NewselectedPos)
             NewselectedPos++;
         if (NewselectedPos > allPositions[LevelManager.GetCurrentLevel()-1].Length - 1)
             NewselectedPos = 1;
         selectedPos = NewselectedPos;
-
+        */
         // Picks a random sibling, activates it and deactivates itself.
         int sibIdx = transform.GetSiblingIndex();
         int numSibs = transform.parent.childCount;

@@ -5,9 +5,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.XR.Management;
 using Google.XR.Cardboard;
+using TMPro;
 
 public class Welcome : MonoBehaviour
 {
+    
+
 
     void Awake()
     {
@@ -16,13 +19,13 @@ public class Welcome : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+      
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
 
     private void StartNoXR(string scene)
@@ -77,7 +80,7 @@ public class Welcome : MonoBehaviour
 
     public void ButtonQuit()
     {
-        Debug.Log("Button Quit");
+       Debug.Log("Button Quit");
        Application.Quit();
     }
 }
