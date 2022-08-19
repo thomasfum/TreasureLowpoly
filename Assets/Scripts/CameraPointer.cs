@@ -254,7 +254,7 @@ public class CameraPointer : MonoBehaviour
             float v = Joystick.Vertical; //get the vertical value of joystick
             float h = Joystick.Horizontal;//get the horizontal value of joystick
                                           // Debug.Log("---> " + v + " , " + h);
-            currentRotation.x += h * Speed;
+            currentRotation.x += h * Speed/1.5f;
             currentRotation.y -= v * Speed;
             //currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
             currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
