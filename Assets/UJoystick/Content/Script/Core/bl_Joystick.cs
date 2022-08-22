@@ -19,7 +19,7 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     [SerializeField] private RectTransform CenterReference;
 
     //Privates
-    private Vector3 DeathArea;
+    private Vector3 DeathAreaLocalPos;
     private Vector3 DeathAreaPos;
     private Vector3 currentVelocity;
     private bool isFree = false;
@@ -58,8 +58,9 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
        
         //Get the default area of joystick
-        DeathArea = CenterReference.localPosition;
+        DeathAreaLocalPos = CenterReference.localPosition;
         DeathAreaPos = CenterReference.position;
+        
         diff = CenterReference.position.magnitude;
         PressScaleVector = new Vector3(OnPressScale, OnPressScale, OnPressScale);
         if (GetComponent<Image>() != null)
@@ -76,19 +77,19 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// </summary>
     void Update()
     {
-        DeathArea = CenterReference.localPosition;
+        DeathAreaLocalPos = CenterReference.localPosition;
         DeathAreaPos = CenterReference.position;
         //If this not free (not touched) then not need continue
         if (!isFree)
             return;
 
         //Return to default position with a smooth movement
-        StickRect.localPosition = Vector3.SmoothDamp(StickRect.localPosition, DeathArea, ref currentVelocity, smoothTime);
+        StickRect.localPosition = Vector3.SmoothDamp(StickRect.localPosition, DeathAreaLocalPos, ref currentVelocity, smoothTime);
         //When is in default position, we not need continue update this
-        if (Vector3.Distance(StickRect.localPosition, DeathArea) < .1f)
+        if (Vector3.Distance(StickRect.localPosition, DeathAreaLocalPos) < .1f)
         {
             isFree = false;
-            StickRect.localPosition = DeathArea;
+            StickRect.localPosition = DeathAreaLocalPos;
         }
     }
 
@@ -128,15 +129,25 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             isFree = false;
             //Get Position of current touch
             Vector3 position = bl_JoystickUtils.TouchPosition(m_Canvas,GetTouchID);
-            //Debug.Log("--->"+ Vector2.Distance(DeathAreaPos, position)+"  r="+ radio);
+
+            StickRect.position = position;
+            float d = Vector2.Distance(DeathAreaLocalPos, StickRect.localPosition);
+            //Debug.Log("--->In:" + StickRect.localPosition + " ; "+ DeathAreaLocalPos +"d="+ d+ "  r=" + radio);
+
+
             //Rotate into the area circumferential of joystick
-            if (Vector2.Distance(DeathAreaPos, position) < radio)
+            if (d < radio)
             {
+                //Debug.Log("--->In:" + StickRect.localPosition + " ; " + DeathAreaLocalPos + "d=" + d + "  r=" + radio);
                 StickRect.position = position;
             }
             else
             {
-                StickRect.position = DeathAreaPos + (position - DeathAreaPos).normalized * radio;
+                //Debug.Log("--->Out:" + StickRect.localPosition + " ; " + DeathAreaLocalPos + "d=" + d + "  r=" + radio);
+                // StickRect.position = DeathAreaPos + (position - DeathAreaPos).normalized;/* * radio*/;
+                 StickRect.localPosition = DeathAreaLocalPos + (StickRect.localPosition - DeathAreaLocalPos).normalized * radio;
+
+                // StickRect.position = position;
             }
         }
     }
@@ -209,8 +220,9 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
     }
 
-   // private float radio { get { return (Radio * 5 + Mathf.Abs((diff - CenterReference.position.magnitude)))/200; } }
-    private float radio { get { return Radio * 5  / 200; } }
+    // private float radio { get { return (Radio * 5 + Mathf.Abs((diff - CenterReference.position.magnitude)))/200; } }
+    // private float radio { get { return Radio * 5  / 200; } }
+    private float radio { get { return Radio *12f; } }
     private float smoothTime { get { return (1 - (SmoothTime)); } }
 
     /// <summary>
@@ -221,7 +233,7 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         get
         {
-            return (StickRect.localPosition.x - DeathArea.x) / (Radio * 1000);
+            return (StickRect.localPosition.x - DeathAreaLocalPos.x) / (Radio * 1000);
         }
     }
 
@@ -233,7 +245,7 @@ public class bl_Joystick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         get
         {
-            return (StickRect.localPosition.y - DeathArea.y) / (Radio*1000);
+            return (StickRect.localPosition.y - DeathAreaLocalPos.y) / (Radio*1000);
         }
     }
 }

@@ -9,8 +9,12 @@ using TMPro;
 
 public class Welcome : MonoBehaviour
 {
-    
 
+    public GameObject CanvasWelcome = null;
+    public GameObject CanvasCredit =null;
+    public GameObject CanvasNoVR = null;
+
+    
 
     void Awake()
     {
@@ -82,5 +86,13 @@ public class Welcome : MonoBehaviour
     {
        Debug.Log("Button Quit");
        Application.Quit();
+    }
+    public void ButtonCredits()
+    {
+        Debug.Log("Button Credits");
+        
+        CanvasCredit.SetActive(true);
+        CanvasWelcome.SetActive(false);
+
     }
 }
