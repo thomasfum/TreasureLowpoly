@@ -12,9 +12,8 @@ public class Welcome : MonoBehaviour
 
     public GameObject CanvasWelcome = null;
     public GameObject CanvasCredit =null;
-    public GameObject CanvasNoVR = null;
-
-    
+    public GameObject NoVRAllowed = null;
+    private IEnumerator coroutine;
 
     void Awake()
     {
@@ -70,11 +69,25 @@ public class Welcome : MonoBehaviour
         XRGeneralSettings.Instance.Manager.DeinitializeLoader();
         Debug.Log("XR stopped completely.");
     }
-   
+
+    // every 2 seconds perform the print()
+    private IEnumerator WaitBeforeDisable(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);
+        NoVRAllowed.SetActive(false);
+    }
+
     public void ButtonVR()
     {
         Debug.Log("Button VR");
-        StartCoroutine(StartXR("LowPloly"));
+        if (Application.platform != RuntimePlatform.Android)
+        {
+            NoVRAllowed.SetActive(true);
+            coroutine = WaitBeforeDisable(5.0f);
+            StartCoroutine(coroutine);
+        }
+        else
+            StartCoroutine(StartXR("LowPloly"));
     }
     public void ButtonNoVR()
     {

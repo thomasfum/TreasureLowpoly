@@ -88,6 +88,11 @@ public class CameraPointer : MonoBehaviour
         }
     }
 
+    public void Button_BackToWelcome()
+    {
+        GameObject Main = GameObject.Find("Main");
+        Main?.SendMessage("BackToWelcomeScene");
+    }
     private bool isObjectController(GameObject go)
     {
         if (go != null)
@@ -236,14 +241,16 @@ public class CameraPointer : MonoBehaviour
         }
         //------------------------------------------------------------------------------------------------------
         // Rotate camera with mouse in unity editor
-        
-        if (Input.GetMouseButton(1))
+        if (Application.isEditor)
         {
-            currentRotation.x += Input.GetAxis("Mouse X") * sensitivity;
-            currentRotation.y -= Input.GetAxis("Mouse Y") * sensitivity;
-            currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
-            currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
-            transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
+            if (Input.GetMouseButton(1))
+            {
+                currentRotation.x += Input.GetAxis("Mouse X") * sensitivity;
+                currentRotation.y -= Input.GetAxis("Mouse Y") * sensitivity;
+                currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
+                currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
+                transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
+            }
         }
 
 
@@ -253,33 +260,16 @@ public class CameraPointer : MonoBehaviour
         {
             float v = Joystick.Vertical; //get the vertical value of joystick
             float h = Joystick.Horizontal;//get the horizontal value of joystick
-                                          // Debug.Log("---> " + v + " , " + h);
+            //Debug.Log("---> " + v + " , " + h);
+
             currentRotation.x += h * Speed/1.5f;
-            currentRotation.y -= v * Speed;
+            currentRotation.y -= v * Speed / 1.5f;
             //currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
             currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
 
             //Debug.Log("---> "  + h+ "= "+ currentRotation.x);
 
             transform.rotation = Quaternion.Euler(currentRotation.y, currentRotation.x, 0);
-
-
-            Vector3 position = bl_JoystickUtils.TouchPosition(m_Canvas, 0);
-            float d=Vector2.Distance(ExitImage.position, position);
-            //Debug.Log("---> pos = " + position+ " d="+d);
-            if (d < 0.2f)
-            {
-#if UNITY_IOS || UNITY_ANDROID && !UNITY_EDITOR
-                GameObject Main = GameObject.Find("Main");
-                Main?.SendMessage("BackToWelcomeScene");
-#else
-                if (Input.GetMouseButton(0))
-                {
-                    GameObject Main = GameObject.Find("Main");
-                    Main?.SendMessage("BackToWelcomeScene");
-                }
-#endif
-            }
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -424,10 +414,24 @@ public class CameraPointer : MonoBehaviour
                     //move forward
                     //MyLog.Log("---> "+ angle);
                     //Debug.Log("---> "+ angle);
-                    if ((angle > 8) && (angle < 35))
+                    if ((angle > 8) && (angle < 38))
                     {
-                        Vector3 dir = (transform.forward * angle / 800) * Time.deltaTime * 100;
-                        audioSource.pitch = 0.8f + (angle / 40);
+                        Vector3 dir = new Vector3();
+
+                        if ((angle > 8) && (angle < 8 + 15))
+                        {
+                            //dir = (cam.transform.forward * angle * speed / 50);
+                            dir = (transform.forward * angle / 800) * Time.deltaTime * 100;
+                            audioSource.pitch = 0.8f + (angle / 40);
+                        }
+                        if ((angle >= 8 + 15) && (angle < 38))
+                        {
+                            //dir = (cam.transform.forward * (38 - angle) * speed / 50);
+                            dir = (transform.forward * (38 - angle) / 800) * Time.deltaTime * 100;
+                            audioSource.pitch = 0.8f + ((38-angle) / 40);
+                        }
+
+                        
 
                         dir.y = 0;
                         transform.position += dir;
@@ -449,9 +453,6 @@ public class CameraPointer : MonoBehaviour
             else // not on floor
                 audioSource.loop = false;
         }
-
-       
-       
        
     }
     
