@@ -863,13 +863,14 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Skybox: AllSky Free - 10 Sky / Skybox Set\nhttps://assetstore.unity.com/packages/p/allsky-free-10-sky-skybox-set-146014\n\nChest:
-    Treasure Set - Free Chest\nhttps://assetstore.unity.com/packages/p/treasure-set-free-chest-72345\n\nWater:
+    Treasure Set - Free Chest\nhttps://assetstore.unity.com/packages/p/treasure-set-free-chest-72345\n\nWind\nhttps://github.com/RenanBomtempo/polygon-wind\n\nWater:
     Low Poly Water\nhttps://assetstore.unity.com/packages/p/lowpoly-water-107563\n\nSound:
     Free Sound Effects Pack\nhttps://assetstore.unity.com/packages/p/free-sound-effects-pack-155776\n\nEnvironment:
     LowpolySimpleNaturePack\thttps://assetstore.unity.com/packages/p/mini-nature-pack-54072\n\nJoystick:
     UJoystick\nhttps://assetstore.unity.com/packages/p/ujoystick-49186\n\nSteps:
     Footsteps - Essentials\nhttps://assetstore.unity.com/packages/p/footsteps-essentials-189879\n\nVisual
-    effects: 52 Special Effects Pack\nhttps://assetstore.unity.com/packages/p/52-special-effects-pack-10419\n"
+    effects: 52 Special Effects Pack\nhttps://assetstore.unity.com/packages/p/52-special-effects-pack-10419\n\nBirds:
+    three.js\nhttps://github.com/mrdoob/three.js/tree/dev/examples/models/gltf"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -896,8 +897,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 16
-  m_fontSizeBase: 16
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1909,7 +1910,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <color=black>V0.5</color>
+  m_text: <color=black>V0.6</color>
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

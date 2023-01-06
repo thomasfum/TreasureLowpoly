@@ -1,3 +1,4 @@
+using Siccity.GLTFUtility;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -64,7 +65,24 @@ public class LevelManager : MonoBehaviour
         TxtScore.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width/30, 0, 0);
         TxtLevel.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width / 30, 0, 0);
         TreasureUI.GetComponent<RectTransform>().localPosition += new Vector3(Screen.width / 30, 0, 0);
-        
+
+        /*
+        // Create new mesh.
+        AnimationClip[] animClips;
+        GameObject result = Importer.LoadFromFile(Application.dataPath + "/flamingo.glb", new ImportSettings(), out animClips);
+
+        // Setup animation, if there is any.
+        // Taking only the first clip for now. Should be pretty easy to extend it  to generalize
+        if (animClips.Length > 0)
+        {
+            Animation anim = result.AddComponent<Animation>();
+            animClips[0].legacy = true;
+            anim.AddClip(animClips[0], animClips[0].name);
+            anim.Play(animClips[0].name);
+            
+        }
+        */
+
     }
 
     // Update is called once per frame

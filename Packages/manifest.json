@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "com.google.xr.cardboard": "file:../Assets/cardboard-xr-plugin-master",
+    "com.siccity.gltfutility": "https://github.com/siccity/gltfutility.git",
     "com.unity.collab-proxy": "1.17.2",
     "com.unity.ide.rider": "2.0.7",
     "com.unity.ide.visualstudio": "2.0.16",
